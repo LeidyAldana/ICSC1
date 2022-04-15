@@ -17,7 +17,6 @@ app.config.update({
 
 
 def generate_token(username):
-    print('>>>>>>')
     out_file = open("myfile.json", "w")
     print(os.getenv('FLAG'))
     json.dump(os.getenv('FLAG'), out_file, indent = 6)
