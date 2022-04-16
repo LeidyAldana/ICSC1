@@ -8,7 +8,7 @@ try:
 except ImportError:
     from Cryptodome.Cipher import AES
 
-# Operation 2 to sign
+# Operation 2 to sign: Divide la data en cierta cantidad
 def split_by(data, cnt):
     return [data[i : i+cnt] for i in range(0, len(data), cnt)]
 
@@ -23,24 +23,26 @@ def xor(a, b):
 
 # operation1(hex string, )
 def sign(data, key):
-    # Taking the first 16 bytes of hex string
+    # Toma los primeros 16 bytes de hex string
     data = pad(data, 16)
+    # Data es dividida en bloques de a 16
     blocks = split_by(data, 16)
     mac = b'\0' * 16
     aes = AES.new(key, AES.MODE_ECB)
+    # Cada bloque pasa por este for, que incluye la función XOR yla función AES
     for block in blocks:
-        # mac is encrypted once
         mac = xor(mac, block)
-        #  again
         mac = aes.encrypt(mac)
-    # and returned as a signature
+    # mac es encriptado nuevamente después del bucle
+    # y es lo que devuelve la función sign
     mac = aes.encrypt(mac)
     return mac
 
-# operation2
+# operation2(hex string, )
 def verify(data, key):
     if len(data) < 16:
         return False, ''
+    # Toma los primeros 16 bytes de hex string
     tag, data = data[:16], data[16:]
     correct_tag = sign(data, key)
     if tag != correct_tag:
