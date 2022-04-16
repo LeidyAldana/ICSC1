@@ -22,10 +22,10 @@ Las cuales por operaciones bit a bit (en números binarios) determinan si mostra
 
 Esta operación tiene como resultado 1 cuando las entradas son diferentes:
 
-0 XOR 0 = 0
-0 XOR 1 = 1
-1 XOR 0 = 1
-1 XOR 1 = 0
+    0 XOR 0 = 0
+    0 XOR 1 = 1
+    1 XOR 0 = 1
+    1 XOR 1 = 0
 
 ### ¿Qué es AES?
 
