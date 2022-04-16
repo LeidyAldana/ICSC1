@@ -5,31 +5,25 @@ from flask import request
 from flask import redirect
 from flask import url_for
 from datetime import datetime
-import jwt
+from authlib.jose import jwt
+from secret import SECRET_KEY
 import os
-import json
 
 
 app = Flask(__name__)
-app.config.update({
-    'SECRET_KEY': os.urandom(32)
-})
 
 
 def generate_token(username):
-    return jwt.encode({
-        'username': username,
-        'flag': os.getenv('FLAG'),
-        'iat': datetime.utcnow()
-        },
-        app.config.get('SECRET_KEY'),
-        algorithm='HS256'
-    )
+    return jwt.encode(
+        {'alg': 'HS256'},
+        {'username': username, 'is_admin': False, 'iat': datetime.utcnow()},
+        SECRET_KEY
+    ).decode()
 
 
 def decode_token(token):
     try:
-        return jwt.decode(token, app.config.get('SECRET_KEY'), algorithms=['HS256'])
+        return jwt.decode(token, SECRET_KEY)
     except:
         return None
 
@@ -52,6 +46,9 @@ def index():
     data = decode_token(token)
     if data is None:
         return render_template('index.html', error='Error: invalid token')
+
+    if data.get('is_admin'):
+        return render_template('index.html', flag=os.getenv('FLAG'))
     
     username = data.get('username')
     return render_template('index.html', message=f'Welcome {username}!')
